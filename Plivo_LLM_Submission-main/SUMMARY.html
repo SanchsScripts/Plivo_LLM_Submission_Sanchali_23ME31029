@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2,000 Step LLM Speedrun Summary</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #030712;
+            --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #030712 60%);
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --card-border: rgba(255, 255, 255, 0.05);
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.15);
+            --secondary: #14b8a6;
+            --secondary-glow: rgba(20, 184, 166, 0.15);
+            --text: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            background-image: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        /* Header block */
+        header {
+            text-align: center;
+            margin-bottom: 3.5rem;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 50%, #14b8a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.05em;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* Overview stats badge grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.75rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+        }
+
+        .stat-val.score {
+            background: linear-gradient(135deg, #34d399, #14b8a6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Details cards block */
+        .main-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-left: 4px solid var(--primary);
+            padding-left: 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+            color: #d1d5db;
+        }
+
+        /* Architecture checklist lists */
+        .spec-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .spec-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .spec-title {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 0.95rem;
+        }
+
+        .spec-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Table details for runs */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        th {
+            background: rgba(99, 102, 241, 0.1);
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        td {
+            font-size: 0.9rem;
+            color: #e5e7eb;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Human vs AI section styling */
+        .collaboration-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .collaboration-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .collab-column {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 14px;
+            padding: 1.75rem;
+        }
+
+        .collab-column h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .human-title {
+            color: var(--secondary);
+        }
+
+        .ai-title {
+            color: var(--primary);
+        }
+
+        .collab-list {
+            list-style: none;
+        }
+
+        .collab-list li {
+            position: relative;
+            padding-left: 1.25rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.88rem;
+            color: #d1d5db;
+        }
+
+        .collab-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .human-list li::before {
+            color: var(--secondary);
+        }
+
+        /* Footer credits */
+        footer {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>2,000 Step LLM Speedrun Summary</h1>
+            <div class="subtitle">Complete implementation report and architectural performance walkthrough</div>
+        </header>
+
+        <!-- Stat Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Final Dev BPB</div>
+                <div class="stat-val score">2.2622</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Parameters</div>
+                <div class="stat-val">1,928,340</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Optimization Steps</div>
+                <div class="stat-val">2,000 / 2,000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Tokenizer Vocabulary</div>
+                <div class="stat-val">2,048 (BPE)</div>
+            </div>
+        </div>
+
+        <!-- Section 1: Optimized Architecture -->
+        <div class="main-card">
+            <h2>Architectural Configuration</h2>
+            <p>Our model has been overhauled with modern, hardware-friendly transformer components to maximize capacity and convergence rates inside the 2,000,000 parameter constraint.</p>
+            <div class="spec-list">
+                <div class="spec-item">
+                    <div class="spec-title">Weight Tying</div>
+                    <div class="spec-desc">lm_head shares weights with the token embedding matrix, freeing ~370,000 parameters to invest in depth and attention width.</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-title">Rotary Positional Embeddings (RoPE)</div>
+                    <div class="spec-desc">Applied inside SelfAttention to queries and keys, removing absolute positional lookup tables and enabling better length generalization.</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-title">RMSNorm & SwiGLU</div>
+                    <div class="spec-desc">Replaced LayerNorm with RMSNorm to bypass mean calculations, and substituted GELU with SwiGLU projection gating inside MLP blocks.</div>
+                </div>
+                <div class="spec-item">
+                    <div class="spec-title">Capacity & Dimension Tuning</div>
+                    <div class="spec-desc">Configured with 4 Layers, 6 Attention Heads, and 180 Embedding Dimension (head dimension 30), totaling exactly 1,928,340 parameters.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Run History -->
+        <div class="main-card">
+            <h2>Experimental Sweeps (RUNLOG.md Summary)</h2>
+            <p>The progression of optimization shows a significant drop in bits-per-byte on the Hindi/English validation text.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Run Description</th>
+                        <th>Tokenizer Type</th>
+                        <th>Architecture Details</th>
+                        <th>Training Schedule</th>
+                        <th>Final Dev BPB</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Run 1: Baseline Reference</strong></td>
+                        <td>Byte-level (Vocab 256)</td>
+                        <td>1.3M params, LayerNorm, GELU, absolute position embedding</td>
+                        <td>Constant LR (3e-4, no decay, no warmup)</td>
+                        <td>3.8214</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Run 2: Optimized Model (Final Checkpoint)</strong></td>
+                        <td>BPE (Vocab 2048)</td>
+                        <td>1.92M params, RMSNorm, SwiGLU MLP, RoPE, Tied weights</td>
+                        <td>AdamW (lr=3e-3, cosine decay, 100-step linear warmup, grad clipping, accumulation)</td>
+                        <td style="color: var(--success); font-weight: 600;">2.2622</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 3: Human-AI Collaboration Breakdown -->
+        <div class="main-card">
+            <h2>Engineering Collaboration Breakdown</h2>
+            <p>A summary of human design directives paired with automated agent coding and execution loops.</p>
+            <div class="collaboration-grid">
+                <div class="collab-column">
+                    <h3 class="human-title">Human-Directed Engineering</h3>
+                    <ul class="collab-list human-list">
+                        <li>Specified architectural goals: RMSNorm, SwiGLU, and Weight Tying.</li>
+                        <li>Configured target parameters caps (< 1.98M) and optimizer step limitations (2,000 steps).</li>
+                        <li>Designated Devanagari script optimization as a critical target.</li>
+                        <li>Authorized and evaluated hyperparameter sweep setups.</li>
+                    </ul>
+                </div>
+                <div class="collab-column">
+                    <h3 class="ai-title">AI-Generated Implementation</h3>
+                    <ul class="collab-list ai-list">
+                        <li>Implemented dynamic cluster-aware regex splitters and custom BPE training in pure Python.</li>
+                        <li>Wrote the optimized math modules for RMSNorm scaling and SwiGLU MLP layers.</li>
+                        <li>Developed Rotary Position Embeddings (RoPE) and complex rotation mechanics on query/key tensors.</li>
+                        <li>Programmed AdamW parameter groupings (decay vs. non-decay) and gradient accumulation loops.</li>
+                        <li>Automated systematic evaluations and parameter measurements.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Speedrun deliverables generated automatically by Antigravity AI Coding Assistant. All caps satisfied.
+        </footer>
+    </div>
+</body>
+</html>
