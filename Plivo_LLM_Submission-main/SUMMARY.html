@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2,000 Step LLM Speedrun Summary</title>
+    <title>Summary of the 2,000 Step LLM Training Speedrun</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -289,81 +289,81 @@
 <body>
     <div class="container">
         <header>
-            <h1>2,000 Step LLM Speedrun Summary</h1>
-            <div class="subtitle">Complete implementation report and architectural performance walkthrough</div>
+            <h1>Summary of the 2,000 Step LLM Speedrun</h1>
+            <div class="subtitle">An exhaustive report on deployment details and network performance analysis</div>
         </header>
 
         <!-- Stat Cards -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-label">Final Dev BPB</div>
+                <div class="stat-label">Validation BPB Result</div>
                 <div class="stat-val score">2.2622</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Total Parameters</div>
+                <div class="stat-label">Total Parameter Count</div>
                 <div class="stat-val">1,928,340</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Optimization Steps</div>
+                <div class="stat-label">Completed Optimization Steps</div>
                 <div class="stat-val">2,000 / 2,000</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Tokenizer Vocabulary</div>
+                <div class="stat-label">Tokenizer Vocabulary Size</div>
                 <div class="stat-val">2,048 (BPE)</div>
             </div>
         </div>
 
         <!-- Section 1: Optimized Architecture -->
         <div class="main-card">
-            <h2>Architectural Configuration</h2>
-            <p>Our model has been overhauled with modern, hardware-friendly transformer components to maximize capacity and convergence rates inside the 2,000,000 parameter constraint.</p>
+            <h2>Model Parameter Design</h2>
+            <p>• We restructured the neural network using highly efficient, hardware-compatible transformer elements.<br>• This design maximizes representational power while adhering to the 2,000,000 parameter limit.</p>
             <div class="spec-list">
                 <div class="spec-item">
-                    <div class="spec-title">Weight Tying</div>
-                    <div class="spec-desc">lm_head shares weights with the token embedding matrix, freeing ~370,000 parameters to invest in depth and attention width.</div>
+                    <div class="spec-title">Weight Parameter Tying</div>
+                    <div class="spec-desc">We linked lm_head and token embedding weights to reclaim approximately 370,000 parameters, which we allocated to deeper layers and wider attention dimensions.</div>
                 </div>
                 <div class="spec-item">
-                    <div class="spec-title">Rotary Positional Embeddings (RoPE)</div>
-                    <div class="spec-desc">Applied inside SelfAttention to queries and keys, removing absolute positional lookup tables and enabling better length generalization.</div>
+                    <div class="spec-title">Rotary Relative Ordering (RoPE)</div>
+                    <div class="spec-desc">We integrated RoPE calculations directly into the SelfAttention queries and keys, which replaced fixed lookup tables and improved sequence length generalization.</div>
                 </div>
                 <div class="spec-item">
-                    <div class="spec-title">RMSNorm & SwiGLU</div>
-                    <div class="spec-desc">Replaced LayerNorm with RMSNorm to bypass mean calculations, and substituted GELU with SwiGLU projection gating inside MLP blocks.</div>
+                    <div class="spec-title">RMSNorm and SwiGLU Activation</div>
+                    <div class="spec-desc">We substituted RMSNorm for LayerNorm to avoid calculating mean values, and we swapped GELU for SwiGLU gates in the feedforward networks.</div>
                 </div>
                 <div class="spec-item">
-                    <div class="spec-title">Capacity & Dimension Tuning</div>
-                    <div class="spec-desc">Configured with 4 Layers, 6 Attention Heads, and 180 Embedding Dimension (head dimension 30), totaling exactly 1,928,340 parameters.</div>
+                    <div class="spec-title">Layer and Channel Configuration</div>
+                    <div class="spec-desc">We set the network shape to 4 layers, 6 attention heads, and a 180-unit embedding width, which established exactly 1,928,340 parameters.</div>
                 </div>
             </div>
         </div>
 
         <!-- Section 2: Run History -->
         <div class="main-card">
-            <h2>Experimental Sweeps (RUNLOG.md Summary)</h2>
-            <p>The progression of optimization shows a significant drop in bits-per-byte on the Hindi/English validation text.</p>
+            <h2>History of Tuning Sweeps (RUNLOG.md Overview)</h2>
+            <p>• Every successive optimization iteration reduced the validation bits-per-byte score.<br>• Evaluation runs measured performance on mixed Hindi and English validation text.</p>
             <table>
                 <thead>
                     <tr>
-                        <th>Run Description</th>
-                        <th>Tokenizer Type</th>
-                        <th>Architecture Details</th>
-                        <th>Training Schedule</th>
-                        <th>Final Dev BPB</th>
+                        <th>Experimental Trial</th>
+                        <th>Tokenizer Configuration</th>
+                        <th>Model Structure Details</th>
+                        <th>Optimization Routine</th>
+                        <th>Validation BPB</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Run 1: Baseline Reference</strong></td>
-                        <td>Byte-level (Vocab 256)</td>
-                        <td>1.3M params, LayerNorm, GELU, absolute position embedding</td>
-                        <td>Constant LR (3e-4, no decay, no warmup)</td>
+                        <td><strong>Iteration 1: Initial Benchmark</strong></td>
+                        <td>Byte-level Tokenizer (256 Vocabulary)</td>
+                        <td>1.3M parameter model using LayerNorm, GELU activation, and absolute position lookups</td>
+                        <td>Static learning rate at 3e-4 with no decay or warmup steps</td>
                         <td>3.8214</td>
                     </tr>
                     <tr>
-                        <td><strong>Run 2: Optimized Model (Final Checkpoint)</strong></td>
-                        <td>BPE (Vocab 2048)</td>
-                        <td>1.92M params, RMSNorm, SwiGLU MLP, RoPE, Tied weights</td>
-                        <td>AdamW (lr=3e-3, cosine decay, 100-step linear warmup, grad clipping, accumulation)</td>
+                        <td><strong>Iteration 2: Integrated Enhancements (Final Checkpoint)</strong></td>
+                        <td>BPE Tokenizer (2048 Vocabulary)</td>
+                        <td>1.92M parameter model using RMSNorm, SwiGLU MLP, RoPE, and shared weights</td>
+                        <td>AdamW optimizer with a cosine schedule, 100 warmup steps, grad clipping, and accumulation</td>
                         <td style="color: var(--success); font-weight: 600;">2.2622</td>
                     </tr>
                 </tbody>
@@ -372,33 +372,33 @@
 
         <!-- Section 3: Human-AI Collaboration Breakdown -->
         <div class="main-card">
-            <h2>Engineering Collaboration Breakdown</h2>
-            <p>A summary of human design directives paired with automated agent coding and execution loops.</p>
+            <h2>Task Distribution and Collaboration Overview</h2>
+            <p>• This section outlines the engineering decisions made by the developer.<br>• It details the code implementation steps automated by the agent.</p>
             <div class="collaboration-grid">
                 <div class="collab-column">
-                    <h3 class="human-title">Human-Directed Engineering</h3>
+                    <h3 class="human-title">Developer Directives</h3>
                     <ul class="collab-list human-list">
-                        <li>Specified architectural goals: RMSNorm, SwiGLU, and Weight Tying.</li>
-                        <li>Configured target parameters caps (< 1.98M) and optimizer step limitations (2,000 steps).</li>
-                        <li>Designated Devanagari script optimization as a critical target.</li>
-                        <li>Authorized and evaluated hyperparameter sweep setups.</li>
+                        <li>We defined the key structural objectives by choosing RMSNorm, SwiGLU, and Tied weights,</li>
+                        <li>while restricting the network size under 1.98M parameters and training for 2,000 steps.</li>
+                        <li>We also established text processing efficiency for the Devanagari script as a key target,</li>
+                        <li>and we approved and monitored the parameter sweeps.</li>
                     </ul>
                 </div>
                 <div class="collab-column">
-                    <h3 class="ai-title">AI-Generated Implementation</h3>
+                    <h3 class="ai-title">Automated Systems Execution</h3>
                     <ul class="collab-list ai-list">
-                        <li>Implemented dynamic cluster-aware regex splitters and custom BPE training in pure Python.</li>
-                        <li>Wrote the optimized math modules for RMSNorm scaling and SwiGLU MLP layers.</li>
-                        <li>Developed Rotary Position Embeddings (RoPE) and complex rotation mechanics on query/key tensors.</li>
-                        <li>Programmed AdamW parameter groupings (decay vs. non-decay) and gradient accumulation loops.</li>
-                        <li>Automated systematic evaluations and parameter measurements.</li>
+                        <li>We constructed a custom BPE training algorithm and cluster-aware regex splitters in pure Python,</li>
+                        <li>implemented the mathematical operations for RMSNorm layers and SwiGLU MLP projections,</li>
+                        <li>and programmed the query and key rotation equations for RoPE.</li>
+                        <li>We also set up the AdamW optimization groups and gradient accumulation pipelines,</li>
+                        <li>while running automated script evaluations and parameter counts.</li>
                     </ul>
                 </div>
             </div>
         </div>
 
         <footer>
-            Speedrun deliverables generated automatically by Antigravity AI Coding Assistant. All caps satisfied.
+            The Antigravity AI Coding Assistant prepared these project files. All parameters met the requirements.
         </footer>
     </div>
 </body>
